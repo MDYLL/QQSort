@@ -1,0 +1,60 @@
+#include <iostream>
+#include <bitset>
+#include <climits>
+#include <vector>
+#include <map>
+#include <algorithm>
+
+using namespace std;
+
+vector<pair<int, float>> radis_list(vector<pair<int, float>> inp, int t) {
+	int i, j, d, m = 1;
+	vector<pair<int, float>> temp[10];
+
+	for (j = 1; j <= t; j++) {
+		for (auto el : inp) {
+			d = ((int)(el.first / m) % 10);
+			temp[d].push_back(el);
+		}
+		inp.clear();
+		for (i = 0; i <= 9; i++) {
+			inp.insert(inp.end(), temp[i].begin(), temp[i].end());
+			temp[i].clear();
+		}
+		m *= 10;
+	}
+	return inp;
+}
+int main()
+{
+	union
+	{
+		float input; // assumes sizeof(float) == sizeof(int)
+		int   output;
+	} data;
+
+	vector<float> v = { 1,3,5,7,2.1,20,0.3 };
+	vector<pair<int, float>> num,out;
+
+	for (float i:v)
+	{
+		data.input = i;
+		std::bitset<sizeof(float) * CHAR_BIT> bits(data.output);
+		//std::cout << bits << std::endl;
+		//cout << (int)(bits.to_ulong())<<endl;
+		num.push_back(pair((int)(bits.to_ulong()), i ));
+	}
+	int maxEl = num[0].first;
+	for (auto el : num)
+		maxEl = max(maxEl, el.first);
+	int t = 0;
+	while (maxEl > 0)
+	{
+		maxEl /= 10;
+		t++;
+	}
+	out = radis_list(num, t);
+	for (auto el : out)
+		cout << el.second << ' ';
+	return 0;
+}
